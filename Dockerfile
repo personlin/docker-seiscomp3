@@ -44,6 +44,8 @@ RUN mv /usr/bin/ischroot /usr/bin/ischroot.original && \
         libpq-dev \
         libxml2-dev \
         python-dev \
+        python \
+        net-tools \
         wget && \
     wget https://github.com/SeisComP3/seiscomp3/archive/release/jakarta/2015.149.tar.gz && \
     tar xvzf 2015.149.tar.gz && \
