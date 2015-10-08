@@ -33,7 +33,6 @@ RUN apt-get install -y \
         libmysqlclient-dev \
         libncurses5-dev \
         libpq-dev \
-	libqt4-dev \
         libxml2-dev \
         python-dev \
         wget && \
@@ -41,9 +40,11 @@ RUN apt-get install -y \
     tar xvzf 2015.149.tar.gz && \
     mkdir -p /tmp/seiscomp3-release-jakarta-2015.149/build
 
+COPY CMakeLists.txt /tmp/seiscomp3-release-jakarta-2015.149/src/trunk/apps/tools/scconfig/CMakeLists.txt
+
 WORKDIR /tmp/seiscomp3-release-jakarta-2015.149/build
 
-RUN cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local && make -j $(grep processor /proc/cpuinfo | wc -l) && make install
+RUN cmake .. -DSC_GLOBAL_GUI=OFF -DSC_TRUNK_DB_POSTGRESQL=ON -DCMAKE_INSTALL_PREFIX=/usr/local && make -j $(grep processor /proc/cpuinfo | wc -l) && make install
 
 # Clean up APT when done.
 RUN apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
