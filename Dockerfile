@@ -44,7 +44,7 @@ RUN mv /usr/bin/ischroot /usr/bin/ischroot.original && \
         libpq-dev \
         libxml2-dev \
         python-dev \
-        python2.7 \
+        python \
         libpython2.7 \
         net-tools \
         wget && \
