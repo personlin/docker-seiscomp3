@@ -62,3 +62,5 @@ RUN mv /usr/bin/ischroot /usr/bin/ischroot.original && \
     apt-get autoremove -y --purge && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+COPY global.cfg /usr/local/etc/global.cfg
