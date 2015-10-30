@@ -39,8 +39,10 @@ RUN mv /usr/bin/ischroot /usr/bin/ischroot.original && \
         libboost-thread1.55.0 \
         libboost-thread-dev \
         libgfortran3 \
+        libmysqlclient18 \
         libmysqlclient-dev \
         libncurses5-dev \
+        libpq5 \
         libpq-dev \
         libxml2-dev \
         python-dev \
