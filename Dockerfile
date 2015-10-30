@@ -56,7 +56,7 @@ RUN mv /usr/bin/ischroot /usr/bin/ischroot.original && \
     mv -v /tmp/CMakeLists.txt /tmp/seiscomp3-release-jakarta-2015.149/src/trunk/apps/tools/scconfig/CMakeLists.txt && \
     cd /tmp/seiscomp3-release-jakarta-2015.149/build && \
     cmake .. -DSC_GLOBAL_GUI=OFF -DSC_TRUNK_DB_POSTGRESQL=ON -DCMAKE_INSTALL_PREFIX=/usr/local && \
-    make -j $(grep processor /proc/cpuinfo | wc -l) && \
+    make -j $(grep -c processor /proc/cpuinfo) && \
     make install && \
     apt-get purge -y $(dpkg -l | awk '/-dev/ { print $2 }' | xargs) wget && \
     apt-get autoremove -y --purge && \
