@@ -1,66 +1,67 @@
-FROM debian:8.2
+FROM alpine:3.3
+# apt-get install -y \
+#     festival \
+#     net-tools \
 
 MAINTAINER Fabien Engels <fabien.engels@unistra.fr>
 
 COPY environment /etc/environment
-COPY CMakeLists.txt /tmp/CMakeLists.txt
 
 WORKDIR /tmp
 
-# Fix Debian  env
-ENV DEBIAN_FRONTEND noninteractive
-ENV INITRD No
-ENV FAKE_CHROOT 1
-
-RUN mv /usr/bin/ischroot /usr/bin/ischroot.original && \
-    ln -s /bin/true /usr/bin/ischroot && \
-    echo 'force-unsafe-io' | tee /etc/dpkg/dpkg.cfg.d/02apt-speedup && \
-    echo 'DPkg::Post-Invoke {"/bin/rm -f /var/cache/apt/archives/*.deb || true";};' | tee /etc/apt/apt.conf.d/no-cache && \
-    apt-get update && apt-get dist-upgrade -y --no-install-recommends && \
-    apt-get install -y \
-        build-essential \
-        cmake \
-        festival \
-        flex \
+RUN apk update && apk upgrade && \
+    apk add \
+	bash \
+	boost-dev \
+	boost-filesystem \
+	boost-iostreams \
+	boost-program_options \
+	boost-regex \
+	boost-signals \
+	boost-system \
+	boost-thread \
+	flex \
+	flex-dev \
+	git \
+	libgfortran \
+	libtirpc-dev \
+	libxml2-dev \
+	mariadb-dev \
+	ncurses-dev \
+	postgresql-dev \
+	python-dev \
+    	build-base \
+    	cmake \
+    	gcc \
         gfortran \
-        libboost-dev \
-        libboost-filesystem1.55.0 \
-        libboost-filesystem-dev \
-        libboost-iostreams1.55.0 \
-        libboost-iostreams-dev \
-        libboost-program-options1.55.0 \
-        libboost-program-options-dev \
-        libboost-regex1.55.0 \
-        libboost-regex-dev \
-        libboost-signals1.55.0 \
-        libboost-signals-dev \
-        libboost-system1.55.0 \
-        libboost-system-dev \
-        libboost-thread1.55.0 \
-        libboost-thread-dev \
-        libgfortran3 \
-        libmysqlclient18 \
-        libmysqlclient-dev \
-        libncurses5-dev \
-        libpq5 \
-        libpq-dev \
-        libxml2-dev \
-        python-dev \
-        python \
-        libpython2.7 \
-        net-tools \
-        wget && \
+	wget && \
     wget https://github.com/SeisComP3/seiscomp3/archive/release/jakarta/2015.149.tar.gz && \
     tar xvzf 2015.149.tar.gz && \
-    mkdir -p /tmp/seiscomp3-release-jakarta-2015.149/build && \
-    mv -v /tmp/CMakeLists.txt /tmp/seiscomp3-release-jakarta-2015.149/src/trunk/apps/tools/scconfig/CMakeLists.txt && \
-    cd /tmp/seiscomp3-release-jakarta-2015.149/build && \
-    cmake .. -DSC_GLOBAL_GUI=OFF -DSC_TRUNK_DB_POSTGRESQL=ON -DCMAKE_INSTALL_PREFIX=/usr/local && \
-    make -j $(grep -c processor /proc/cpuinfo) && \
-    make install && \
-    apt-get purge -y $(dpkg -l | awk '/-dev/ { print $2 }' | xargs) wget && \
-    apt-get autoremove -y --purge && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    mkdir -p /tmp/seiscomp3-release-jakarta-2015.149/build
 
-COPY global.cfg /usr/local/etc/global.cfg
+WORKDIR /tmp/seiscomp3-release-jakarta-2015.149/build
+
+COPY CMakeLists.txt.ipgp /tmp/seiscomp3-release-jakarta-2015.149/src/ipgp/apps/CMakeLists.txt
+COPY CMakeLists.txt.scconfig /tmp/seiscomp3-release-jakarta-2015.149/src/trunk/apps/tools/scconfig/CMakeLists.txt
+
+RUN apk add mariadb-dev
+
+COPY binarchive.cpp /tmp/seiscomp3-release-jakarta-2015.149/src/trunk/libs/seiscomp3/io/archive/binarchive.cpp
+COPY diff.cpp /tmp/seiscomp3-release-jakarta-2015.149/src/trunk/libs/seiscomp3/datamodel/diff.cpp
+COPY utils.cpp /tmp/seiscomp3-release-jakarta-2015.149/src/trunk/libs/seiscomp3/datamodel/utils.cpp
+COPY sysdep1.h /tmp/seiscomp3-release-jakarta-2015.149/src/trunk/libs/3rd-party/locsat/lib/libf2c/sysdep1.h
+RUN mv /usr/include/tirpc/* /usr/include/
+
+RUN rm -rf /tmp/seiscomp3-release-jakarta-2015.149/src/ipgp/apps/ew2sc3
+
+RUN cmake .. -DSC_GLOBAL_GUI=OFF -DSC_TRUNK_DB_POSTGRESQL=ON -DCMAKE_INSTALL_PREFIX=/
+#     make -j $(grep -c processor /proc/cpuinfo) && \
+#     make install
+
+
+    # apt-get purge -y $(dpkg -l | awk '/-dev/ { print $2 }' | xargs) wget && \
+    # apt-get autoremove -y --purge && \
+    # apt-get clean && \
+    # rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+COPY global.cfg /etc/global.cfg
