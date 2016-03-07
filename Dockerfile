@@ -52,7 +52,7 @@ RUN mv /usr/bin/ischroot /usr/bin/ischroot.original && \
     tar xvzf 2016.062.tar.gz && \
     mkdir -p /tmp/seiscomp3-release-jakarta-2016.062/build && \
     cd /tmp/seiscomp3-release-jakarta-2016.062/build && \
-    cmake .. -DSC_GLOBAL_GUI=OFF -DSC_TRUNK_DB_MYSQL=OFF -DSC_TRUNK_DB_POSTGRESQL=ON -DCMAKE_INSTALL_PREFIX=/usr && \
+    cmake .. -DSC_GLOBAL_GUI=OFF -DSC_TRUNK_DB_MYSQL=OFF -DSC_TRUNK_DB_POSTGRESQL=ON -DCMAKE_INSTALL_PREFIX=/ && \
     make -j $(grep -c processor /proc/cpuinfo) && \
     make install && \
     apt-get purge -y $(dpkg -l | awk '/-dev/ { print $2 }' | xargs) wget && \
