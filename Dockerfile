@@ -44,6 +44,7 @@ RUN mv /usr/bin/ischroot /usr/bin/ischroot.original && \
         libxml2-dev \
         python-dev \
         python \
+	python-twisted \
         libpython2.7 \
         net-tools \
         wget && \
