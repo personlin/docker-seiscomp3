@@ -16,6 +16,7 @@ RUN set -ex \
         build-essential \
         ca-certificates \
         cmake \
+        default-libmysqlclient-dev \
         gfortran \
         libboost-dev \
         libboost-filesystem-dev \
@@ -27,6 +28,7 @@ RUN set -ex \
         libfl-dev \
         libpq-dev \
         libqt4-dev \
+        libsqlite3-dev \
         libssl-dev \
         libxml2-dev \
         python-dev \
@@ -52,7 +54,12 @@ RUN set -ex \
     && tar xvzf $SC_VERSION.tar.gz \
     && mkdir -p $WORK_DIR/seiscomp3-release-jakarta-$SC_VERSION/build \
     && cd $WORK_DIR/seiscomp3-release-jakarta-$SC_VERSION/build \
-    && cmake .. -DSC_TRUNK_DB_MYSQL=OFF -DSC_TRUNK_DB_POSTGRESQL=ON -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+    && cmake \
+        -DSC_TRUNK_DB_MYSQL=ON \
+        -DSC_TRUNK_DB_POSTGRESQL=ON \
+        -DSC_TRUNK_DB_SQLITE3=ON \
+        -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+        .. \
     && make -j $(grep -c processor /proc/cpuinfo) \
     && make install \
     && apt-get purge -y --autoremove $buildDeps \
