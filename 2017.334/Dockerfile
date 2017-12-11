@@ -68,6 +68,7 @@ RUN set -ex \
     && mkdir -p $WORK_DIR/seiscomp3-release-jakarta-$SC_VERSION/build \
     && cd $WORK_DIR/seiscomp3-release-jakarta-$SC_VERSION/build \
     && cmake \
+        -DSC_GLOBAL_GUI=ON \
         -DSC_TRUNK_DB_MYSQL=ON \
         -DSC_TRUNK_DB_POSTGRESQL=ON \
         -DSC_TRUNK_DB_SQLITE3=ON \
