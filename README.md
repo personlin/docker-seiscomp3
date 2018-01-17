@@ -30,6 +30,22 @@ docker exec seiscomp3 seiscomp exec scolv
 
 ## Configuration
 
-A folder with the global configuration of seiscomp3 and custom plugins must be
-mounted in `/data/seiscomp3`. The same file tree is used than SeisComP3.
-Moreover, the local configuration can be mounted in `/data/.seiscomp3`.
+It can be useful to mount the following volumes:
+
+- `/data/seiscomp3`
+- `/data/.seiscomp3`
+- `/data/init`
+- `/opt/seiscomp3/etc` (without `/opt/seiscomp3/etc/defaults`,
+  `/opt/seiscomp3/etc/descriptions` and `/opt/seiscomp3/etc/init`)
+- `/opt/seiscomp3/share/maps`
+- `/opt/seiscomp3/share/locsat`
+- `/opt/seiscomp3/var`
+- `/home/sysop/.seiscomp3/log`
+- `/tmp/.X11-unix`
+
+The `/data/seiscomp3`, `/data/.seiscomp3` and `/data/init` folders are copied
+at the start of the container respectively in `/opt/seiscomp3`,
+`/home/sysop/.seiscomp3` and `/opt/seiscomp3/etc/init`. The `/data/init` is
+used to keep the state of the different modules. A daemon is running to copy
+every `*.auto` file of the `/opt/seiscomp3/etc/init` in the `/data/init` so
+that the container can be restarted in the same state.

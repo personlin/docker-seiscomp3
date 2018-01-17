@@ -5,6 +5,7 @@ ENV WORK_DIR /opt/seiscomp3
 ENV INSTALL_DIR /opt/seiscomp3
 ENV SEISCOMP3_CONFIG /data/seiscomp3
 ENV LOCAL_CONFIG /data/.seiscomp3
+ENV INIT_STATE /data/init
 ENV PATH $PATH:$INSTALL_DIR/bin:$INSTALL_DIR/sbin
 ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$INSTALL_DIR/lib
 ENV PYTHONPATH $PYTHONPATH:$INSTALL_DIR/lib/python
@@ -61,6 +62,7 @@ RUN set -ex \
         libqtgui4 \
         libqt4-xml \
         # Misc
+        lsyncd \
         rsync \
         $buildDeps \
     && wget https://github.com/SeisComP3/seiscomp3/archive/release/jakarta/$SC_VERSION.tar.gz \
@@ -97,6 +99,7 @@ USER sysop
 RUN set -ex \
     && mkdir -p $SEISCOMP3_CONFIG \
     && mkdir -p $LOCAL_CONFIG \
+    && mkdir -p $INIT_STATE \
     && mkdir -p $HOME/.seiscomp3
 
 ENTRYPOINT ["./docker-entrypoint.sh"]
