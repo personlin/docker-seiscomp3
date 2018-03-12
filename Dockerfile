@@ -1,17 +1,21 @@
 FROM debian:stretch-slim
 
-MAINTAINER Fabien Engels <fabien.engels@unistra.fr>
-
-ENV SC_VERSION 2017.124.02
-ENV WORK_DIR /tmp
-ENV INSTALL_DIR /home/sysop
-ENV PATH $PATH:$INSTALL_DIR/bin
+ENV SC_VERSION 2017.334.04
+ENV WORK_DIR /opt/seiscomp3
+ENV INSTALL_DIR /opt/seiscomp3
+ENV SEISCOMP3_CONFIG /data/seiscomp3
+ENV LOCAL_CONFIG /data/.seiscomp3
+ENV INIT_STATE /data/init
+ENV PATH $PATH:$INSTALL_DIR/bin:$INSTALL_DIR/sbin
 ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$INSTALL_DIR/lib
 ENV PYTHONPATH $PYTHONPATH:$INSTALL_DIR/lib/python
 
 WORKDIR $WORK_DIR
 
 RUN set -ex \
+    # Create some directories to PostgreSQL install
+    && mkdir -p /usr/share/man/man1 \
+    && mkdir -p /usr/share/man/man7 \
     && buildDeps=' \
         build-essential \
         ca-certificates \
@@ -36,6 +40,7 @@ RUN set -ex \
     ' \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
+        # SeisComP3 dependencies
         flex \
         libboost-filesystem1.62.0 \
         libboost-iostreams1.62.0 \
@@ -49,12 +54,23 @@ RUN set -ex \
         python \
         python-dateutil \
         python-twisted \
+        # Database dependencies
+        libmariadbclient18 \
+        postgresql-9.6 \
+        sqlite3 \
+        # Graphical interface dependencies
+        libqtgui4 \
+        libqt4-xml \
+        # Misc
+        lsyncd \
+        rsync \
         $buildDeps \
     && wget https://github.com/SeisComP3/seiscomp3/archive/release/jakarta/$SC_VERSION.tar.gz \
     && tar xvzf $SC_VERSION.tar.gz \
     && mkdir -p $WORK_DIR/seiscomp3-release-jakarta-$SC_VERSION/build \
     && cd $WORK_DIR/seiscomp3-release-jakarta-$SC_VERSION/build \
     && cmake \
+        -DSC_GLOBAL_GUI=ON \
         -DSC_TRUNK_DB_MYSQL=ON \
         -DSC_TRUNK_DB_POSTGRESQL=ON \
         -DSC_TRUNK_DB_SQLITE3=ON \
@@ -64,13 +80,26 @@ RUN set -ex \
     && make install \
     && apt-get purge -y --autoremove $buildDeps \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* $WORK_DIR/*
+    && rm -rf \
+        /var/lib/apt/lists/* \
+        /tmp/* \
+        /var/tmp/* \
+        $WORK_DIR/seiscomp3-release-jakarta-$SC_VERSION \
+        $WORK_DIR/$SC_VERSION.tar.gz
 
 RUN useradd -m -s /bin/bash sysop \
-    && chown -R sysop:sysop $INSTALL_DIR
+    && chown -R sysop:sysop $INSTALL_DIR \
+    && mkdir -p /data \
+    && chown sysop:sysop /data
+
+COPY ./docker-entrypoint.sh $WORD_DIR
 
 USER sysop
 
-COPY global.cfg $INSTALL_DIR/etc/global.cfg
+RUN set -ex \
+    && mkdir -p $SEISCOMP3_CONFIG \
+    && mkdir -p $LOCAL_CONFIG \
+    && mkdir -p $INIT_STATE \
+    && mkdir -p $HOME/.seiscomp3
 
-ENTRYPOINT ["seiscomp"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
