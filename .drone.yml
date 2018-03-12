@@ -5,6 +5,16 @@ pipeline:
     repo: registry.u-strasbg.fr/seiscomp3
     tags:
       - ${DRONE_COMMIT_SHA:0:7}
-      - latest
     when:
       branch: master
+
+  publish_version:
+    image: plugins/docker
+    registry: registry.u-strasbg.fr
+    repo: registry.u-strasbg.fr/seiscomp3
+    tags:
+      - ${DRONE_TAG:1:-4}
+      - ${DRONE_TAG#v}
+      - latest
+    when:
+      event: tag
