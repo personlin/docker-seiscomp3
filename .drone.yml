@@ -15,8 +15,8 @@ pipeline:
     repo: registry.u-strasbg.fr/seiscomp3
     tags:
       - ${DRONE_TAG##v}
-      - ${DRONE_TAG:1:5}
-      - ${DRONE_TAG:1:9}
+      - ${DRONE_TAG:1:4}
+      - ${DRONE_TAG:1:8}
       - latest
     when:
       event: tag
