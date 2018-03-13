@@ -5,6 +5,7 @@ pipeline:
     repo: registry.u-strasbg.fr/seiscomp3
     tags:
       - ${DRONE_COMMIT_SHA:0:7}
+      - ${DRONE_BRANCH}
     when:
       branch: master
 
@@ -13,8 +14,9 @@ pipeline:
     registry: registry.u-strasbg.fr
     repo: registry.u-strasbg.fr/seiscomp3
     tags:
-      - ${DRONE_TAG:1:-4}
       - ${DRONE_TAG#v}
+      - ${DRONE_TAG:1:5}
+      - ${DRONE_TAG:1:9}
       - latest
     when:
       event: tag
