@@ -6,17 +6,12 @@ pipeline:
     tags:
       - ${DRONE_COMMIT_SHA:0:7}
       - ${DRONE_BRANCH}
-    when:
-      branch: master
 
-  publish_version:
+  publish_latest:
     image: plugins/docker
     registry: registry.u-strasbg.fr
     repo: registry.u-strasbg.fr/seiscomp3
     tags:
-      - ${DRONE_TAG##v}
-      - ${DRONE_TAG:1:4}
-      - ${DRONE_TAG:1:8}
       - latest
     when:
-      event: tag
+      branch: master
