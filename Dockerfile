@@ -1,6 +1,5 @@
 FROM debian:stretch-slim
 
-ENV SC_VERSION 2017.334.04
 ENV WORK_DIR /opt/seiscomp3
 ENV INSTALL_DIR /opt/seiscomp3
 ENV SEISCOMP3_CONFIG /data/seiscomp3
@@ -22,6 +21,7 @@ RUN set -ex \
         cmake \
         default-libmysqlclient-dev \
         gfortran \
+        git \
         libboost-dev \
         libboost-filesystem-dev \
         libboost-iostreams-dev \
@@ -65,10 +65,9 @@ RUN set -ex \
         lsyncd \
         rsync \
         $buildDeps \
-    && wget https://github.com/SeisComP3/seiscomp3/archive/release/jakarta/$SC_VERSION.tar.gz \
-    && tar xvzf $SC_VERSION.tar.gz \
-    && mkdir -p $WORK_DIR/seiscomp3-release-jakarta-$SC_VERSION/build \
-    && cd $WORK_DIR/seiscomp3-release-jakarta-$SC_VERSION/build \
+    && git clone --depth 1 https://github.com/SeisComP3/seiscomp3.git $WORK_DIR/seiscomp3 \
+    && mkdir -p $WORK_DIR/seiscomp3/build \
+    && cd $WORK_DIR/seiscomp3/build \
     && cmake \
         -DSC_GLOBAL_GUI=ON \
         -DSC_TRUNK_DB_MYSQL=ON \
@@ -84,8 +83,7 @@ RUN set -ex \
         /var/lib/apt/lists/* \
         /tmp/* \
         /var/tmp/* \
-        $WORK_DIR/seiscomp3-release-jakarta-$SC_VERSION \
-        $WORK_DIR/$SC_VERSION.tar.gz
+        $WORK_DIR/seiscomp3
 
 RUN useradd -m -s /bin/bash sysop \
     && chown -R sysop:sysop $INSTALL_DIR \
