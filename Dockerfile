@@ -62,8 +62,11 @@ RUN set -ex \
         libqtgui4 \
         libqt4-xml \
         # Misc
+        cron \
+        gosu \
         lsyncd \
         rsync \
+        supervisor \
         $buildDeps \
     && git clone --depth 1 https://github.com/SeisComP3/seiscomp3.git $WORK_DIR/seiscomp3 \
     && mkdir -p $WORK_DIR/seiscomp3/build \
@@ -99,5 +102,10 @@ RUN set -ex \
     && mkdir -p $LOCAL_CONFIG \
     && mkdir -p $INIT_STATE \
     && mkdir -p $HOME/.seiscomp3
+
+USER root
+
+COPY ./lsyncd.conf $WORK_DIR
+COPY ./supervisord.conf $WORK_DIR
 
 ENTRYPOINT ["./docker-entrypoint.sh"]
