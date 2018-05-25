@@ -1,7 +1,8 @@
 FROM debian:stretch-slim
 
 ENV WORK_DIR /opt/seiscomp3
-ENV INSTALL_DIR /opt/seiscomp3
+ENV BUILD_DIR /tmp/seiscomp3
+ENV INSTALL_DIR $WORK_DIR
 ENV SEISCOMP3_CONFIG /data/seiscomp3
 ENV LOCAL_CONFIG /data/.seiscomp3
 ENV INIT_STATE /data/init
@@ -68,9 +69,9 @@ RUN set -ex \
         rsync \
         supervisor \
         $buildDeps \
-    && git clone --depth 1 https://github.com/SeisComP3/seiscomp3.git $WORK_DIR/seiscomp3 \
-    && mkdir -p $WORK_DIR/seiscomp3/build \
-    && cd $WORK_DIR/seiscomp3/build \
+    && git clone --depth 1 https://github.com/SeisComP3/seiscomp3.git $BUILD_DIR \
+    && mkdir -p $BUILD_DIR/build \
+    && cd $BUILD_DIR/build \
     && cmake \
         -DSC_GLOBAL_GUI=ON \
         -DSC_TRUNK_DB_MYSQL=ON \
@@ -86,7 +87,7 @@ RUN set -ex \
         /var/lib/apt/lists/* \
         /tmp/* \
         /var/tmp/* \
-        $WORK_DIR/seiscomp3
+        $BUILD_DIR
 
 RUN useradd -m -s /bin/bash sysop \
     && chown -R sysop:sysop $INSTALL_DIR \
