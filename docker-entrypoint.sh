@@ -5,6 +5,10 @@ rsync -av $SEISCOMP3_CONFIG/ $INSTALL_DIR/
 rsync -av $LOCAL_CONFIG/ /home/sysop/.seiscomp3/
 rsync -av $INIT_STATE/ $INSTALL_DIR/etc/init/
 
+chown -R sysop:sysop $INSTALL_DIR
+chown -R sysop:sysop /home/sysop/.seiscomp3
+chown -R sysop:sysop $INIT_STATE
+
 case $1 in
     "")
         supervisord -c supervisord.conf

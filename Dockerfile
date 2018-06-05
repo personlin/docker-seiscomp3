@@ -67,7 +67,6 @@ RUN set -ex \
         gosu \
         lsyncd \
         rsync \
-        ssh \
         supervisor \
         $buildDeps \
     && git clone --depth 1 https://github.com/SeisComP3/seiscomp3.git $BUILD_DIR \
