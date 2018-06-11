@@ -29,6 +29,7 @@ services:
             # Mount database in a permanent volume
             - db:/var/lib/postgresql/data
         ports:
+            # Allow external database connection
             - "10000:5432"
 
     seiscomp3:
@@ -61,9 +62,13 @@ services:
             - path/to/seiscomp3/share/locsat:/opt/seiscomp3/share/locsat
             - ./var:/opt/seiscomp3/var
             - ./.seiscomp3/log:/home/sysop/.seiscomp3/log
+            # Custom scripts under `/docker-entrypoint-init.d` will be executed
+            # before starting seiscomp.
+            - ./docker-entrypoint-init.d:/docker-entrypoint-init.d
             # Used to start GUI applications
             - /tmp/.X11-unix:/tmp/.X11-unix
         ports:
+            # Allow external messaging system connection
             - "10001:4803"
 
 volumes:
@@ -75,6 +80,13 @@ volumes:
     defaults:
     descriptions:
     init:
+```
+
+The `project_db` external volume must be created before starting
+`docker-compose`:
+
+```bash
+docker volume create project_db
 ```
 
 With this docker-compose, seiscomp3 applications like scolv can be started on
