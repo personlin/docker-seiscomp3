@@ -6,6 +6,7 @@ ENV INSTALL_DIR $WORK_DIR
 ENV SEISCOMP3_CONFIG /data/seiscomp3
 ENV LOCAL_CONFIG /data/.seiscomp3
 ENV INIT_STATE /data/init
+ENV ENTRYPOINT_INIT /docker-entrypoint-init.d
 ENV PATH $PATH:$INSTALL_DIR/bin:$INSTALL_DIR/sbin
 ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$INSTALL_DIR/lib
 ENV PYTHONPATH $PYTHONPATH:$INSTALL_DIR/lib/python
@@ -89,7 +90,8 @@ RUN set -ex \
         /var/tmp/* \
         $BUILD_DIR
 
-RUN useradd -m -s /bin/bash sysop \
+RUN set -ex \
+    && useradd -m -s /bin/bash sysop \
     && chown -R sysop:sysop $INSTALL_DIR \
     && mkdir -p /data \
     && chown sysop:sysop /data

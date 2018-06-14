@@ -12,7 +12,9 @@ chown -R sysop:sysop /home/sysop/.seiscomp3
 chown -R sysop:sysop $INIT_STATE
 
 # Execute init scripts
-for f in /docker-entrypoint-init.d/*; do
+for f in $ENTRYPOINT_INIT/*; do
+    # Check if $f is a regular file
+    [ -f "$f" ] || continue
     echo "$0: running $f"; . "$f"
 done
 
