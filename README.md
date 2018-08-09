@@ -107,8 +107,8 @@ docker exec -it project_seiscomp3_1 seiscomp exec scolv
 Supervisor is used to run multiple services in the container. It basically
 starts 3 services:
 
-- SeisComP3: a `seiscomp start` command is executed.
 - Cron. This allows to start periodic tasks, such as `seiscomp check`.
 - [Lsyncd](https://github.com/axkibe/lsyncd). Lsyncd is used to synchronize
-  every etc/init/*.auto files. This way, the SeisComP3 modules can be
+  every `etc/init/*.auto` files. This way, the SeisComP3 modules can be
   restarted at the start of the container.
+- SeisComP3: a `seiscomp start` command is executed.
